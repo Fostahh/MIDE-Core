@@ -11,7 +11,7 @@ public struct ListVideoGameResponse: Codable {
     let results: [VideoGameResponse]
 }
 
-public struct VideoGameResponse: Codable {
+public struct VideoGameResponse: Codable, Equatable {
     let id: Int
     let name: String
     let backgroundImage, released: String?
@@ -23,3 +23,4 @@ public struct VideoGameResponse: Codable {
         case rating
     }
 }
+

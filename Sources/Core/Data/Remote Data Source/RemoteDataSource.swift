@@ -71,3 +71,80 @@ public final class RemoteDataSource: RemoteDataSourceProtocol {
     }
     
 }
+
+public final class MockRemoteDataSource: RemoteDataSourceProtocol {
+    
+    public init(scenario: TestScenario) {
+        self.scenario = scenario
+    }
+    
+    private let scenario: TestScenario
+    
+    public func getGames() -> AnyPublisher<[VideoGameResponse], Error> {
+        return Future<[VideoGameResponse], Error> { [weak self] completion in
+            guard let self else { return }
+            switch self.scenario {
+            case .success:
+                guard let path = Bundle.module.url(forResource: "video_game", withExtension: "json") else {
+                    return
+                }
+                
+                do {
+                    let data = try Data(contentsOf: path)
+                    let response = try JSONDecoder().decode(ListVideoGameResponse.self, from: data)
+                    completion(.success(response.results))
+                } catch {
+                    completion(.failure(error))
+                }
+            case .failure:
+                completion(.failure(NSError(domain: "File not found", code: 404, userInfo: nil)))
+            }
+        }.eraseToAnyPublisher()
+    }
+    
+    public func getGamesByName(query: String) -> AnyPublisher<[VideoGameResponse], any Error> {
+        return Future<[VideoGameResponse], Error> { [weak self] completion in
+            guard let self else { return }
+            switch self.scenario {
+            case .success:
+                guard let path = Bundle.module.url(forResource: "video_game", withExtension: "json") else {
+                    return
+                }
+                
+                do {
+                    let data = try Data(contentsOf: path)
+                    let response = try JSONDecoder().decode(ListVideoGameResponse.self, from: data)
+                    completion(.success(response.results))
+                } catch {
+                    completion(.failure(error))
+                }
+            case .failure:
+                completion(.failure(NSError(domain: "File not found", code: 404, userInfo: nil)))
+            }
+        }.eraseToAnyPublisher()
+    }
+    
+    public func getGameDetails(id: Int) -> AnyPublisher<DetailVideoGameResponse, any Error> {
+        return Future<DetailVideoGameResponse, Error> { [weak self] completion in
+            guard let self else { return }
+            switch self.scenario {
+            case .success:
+                guard let path = Bundle.module.url(forResource: "detail_video_game", withExtension: "json") else {
+                    return
+                }
+                
+                do {
+                    let data = try Data(contentsOf: path)
+                    let response = try JSONDecoder().decode(DetailVideoGameResponse.self, from: data)
+                    completion(.success(response))
+                } catch {
+                    completion(.failure(error))
+                }
+            case .failure:
+                completion(.failure(NSError(domain: "File not found", code: 404, userInfo: nil)))
+            }
+        }.eraseToAnyPublisher()
+    }
+    
+    
+}

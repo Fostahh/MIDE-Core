@@ -91,6 +91,86 @@ public final class LocalDataSource: LocalDataSourceProtocol {
     
 }
 
+public final class MockLocalDataSource: LocalDataSourceProtocol {
+    
+    public init(scenario: TestScenario) {
+        switch scenario {
+        case .success:
+            let config = Realm.Configuration(inMemoryIdentifier: "MockRealm")
+            self.realm = try? Realm(configuration: config)
+        case .failure:
+            self.realm = nil
+        }
+    }
+    
+    public let realm: Realm?
+    
+    public func getVideoGames() -> AnyPublisher<[VideoGameEntity], Error> {
+        return Future<[VideoGameEntity], Error> { completion in
+            if let realm = self.realm {
+                let videoGame = realm.objects(VideoGameEntity.self).sorted(byKeyPath: "id").toArray(ofType: VideoGameEntity.self)
+                completion(.success(videoGame))
+            } else {
+                completion(.failure(DatabaseError.invalidInstance))
+            }
+        }.eraseToAnyPublisher()
+    }
+    
+    public func getVideoGame(by id: Int) -> AnyPublisher<VideoGameEntity?, Error> {
+        return Future<VideoGameEntity?, Error> { completion in
+            if let realm = self.realm {
+                let videoGame = realm.object(ofType: VideoGameEntity.self, forPrimaryKey: id)
+                if let videoGame = videoGame {
+                    completion(.success(videoGame))
+                } else {
+                    completion(.success(nil))
+                }
+            } else {
+                completion(.failure(DatabaseError.invalidInstance))
+            }
+        }.eraseToAnyPublisher()
+    }
+    
+    public func addVideoGame(from videoGame: VideoGameEntity) -> AnyPublisher<Bool, Error> {
+        return Future<Bool, Error> { completion in
+            if let realm = self.realm {
+                do {
+                    try realm.write {
+                        realm.add(videoGame, update: .all)
+                        completion(.success(true))
+                    }
+                } catch {
+                    completion(.failure(DatabaseError.requestFailed))
+                }
+            } else {
+                completion(.failure(DatabaseError.invalidInstance))
+            }
+        }.eraseToAnyPublisher()
+    }
+    
+    public func deleteVideoGame(by id: Int) -> AnyPublisher<Bool, Error> {
+        return Future<Bool, Error> { completion in
+            if let realm = self.realm {
+                do {
+                    try realm.write {
+                        if let videoGameCache = realm.object(ofType: VideoGameEntity.self, forPrimaryKey: id) {
+                            realm.delete(videoGameCache)
+                            completion(.success(true))
+                        } else {
+                            completion(.success(true))
+                        }
+                    }
+                } catch {
+                    completion(.failure(DatabaseError.requestFailed))
+                }
+            } else {
+                completion(.failure(DatabaseError.invalidInstance))
+            }
+        }.eraseToAnyPublisher()
+    }
+    
+}
+
 extension Results {
     
     func toArray<T>(ofType: T.Type) -> [T] {

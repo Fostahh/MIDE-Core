@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct DetailVideoGameResponse: Codable {
+public struct DetailVideoGameResponse: Codable, Equatable {
     let id: Int
     let name, description: String
     let backgroundImage, released, backgroundImageAdditional: String?
@@ -26,17 +26,17 @@ public struct DetailVideoGameResponse: Codable {
     }
 }
 
-public struct ESRBRatingResponse: Codable {
+public struct ESRBRatingResponse: Codable, Equatable {
     let id: Int
     let name: String
 }
 
-public struct GenreResponse: Codable {
+public struct GenreResponse: Codable, Equatable {
     let id: Int
     let name: String
 }
 
-public struct DeveloperResponse: Codable {
+public struct DeveloperResponse: Codable, Equatable {
     let id: Int
     let name: String
 }

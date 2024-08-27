@@ -20,7 +20,7 @@ public final class ObjectMapper {
         }
     }
     
-    static func mapListVideoGameResponseToListVideoGameDomain(videoGames: [VideoGameEntity]) -> [VideoGame] {
+    static func mapListVideoGameEntityToListVideoGameDomain(videoGames: [VideoGameEntity]) -> [VideoGame] {
         videoGames.map { entity in
             VideoGame(
                 id: entity.id,

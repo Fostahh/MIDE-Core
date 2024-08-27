@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct VideoGame {
+public struct VideoGame: Equatable {
     public let id: Int
     public let name, released, backgroundImage: String
     public let rating: Double

@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct DetailVideoGame: Encodable {
+public struct DetailVideoGame: Encodable, Equatable {
     public let id: Int
     public let name, description, backgroundImage, released, backgroundImageAdditional: String
     public let rating: Double
@@ -57,17 +57,17 @@ public struct DetailVideoGame: Encodable {
     }
 }
 
-public struct ESRBRating: Encodable {
+public struct ESRBRating: Encodable, Equatable {
     let id: Int
     let name: String
 }
 
-public struct Genre: Encodable {
+public struct Genre: Encodable, Equatable {
     let id: Int
     let name: String
 }
 
-public struct Developer: Encodable {
+public struct Developer: Encodable, Equatable {
     let id: Int
     let name: String
 }

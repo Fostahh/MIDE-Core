@@ -24,6 +24,10 @@ let package = Package(
             dependencies: [
                 .product(name: "Alamofire", package: "alamofire"),
                 .product(name: "RealmSwift", package: "realm-swift")
+            ],
+            resources: [
+                .process("Util/Mock Response/video_game.json"),
+                .process("Util/Mock Response/detail_video_game.json")
             ]
         ),
         .testTarget(

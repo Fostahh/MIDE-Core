@@ -43,13 +43,20 @@ public final class GameRepository: GameRepositoryProtocol {
             .flatMap { result -> AnyPublisher<DetailVideoGame, Error> in
                 if let result = result {
                     return self.local.getVideoGame(by: id)
-                        .map { _ in ObjectMapper.mapDetailVideoGameEntityToDetailVideoGameDomain(entity: result) }
+                        .map { _ in
+                            return ObjectMapper.mapDetailVideoGameEntityToDetailVideoGameDomain(entity: result)
+                        }
                         .eraseToAnyPublisher()
                 } else {
                     return self.remote.getGameDetails(id: id)
                         .map { ObjectMapper.mapDetailVideoGameResponseToDetailVideoGameDomain(response: $0) }
                         .eraseToAnyPublisher()
                 }
+            }
+            .catch { _ in
+                return self.remote.getGameDetails(id: id)
+                    .map { ObjectMapper.mapDetailVideoGameResponseToDetailVideoGameDomain(response: $0) }
+                    .eraseToAnyPublisher()
             }
             .eraseToAnyPublisher()
     }
@@ -67,7 +74,7 @@ public final class GameRepository: GameRepositoryProtocol {
     
     public func getFavoriteGames() -> AnyPublisher<[VideoGame], Error> {
         return self.local.getVideoGames()
-            .map { ObjectMapper.mapListVideoGameResponseToListVideoGameDomain(videoGames: $0) }
+            .map { ObjectMapper.mapListVideoGameEntityToListVideoGameDomain(videoGames: $0) }
             .eraseToAnyPublisher()
     }
 }
